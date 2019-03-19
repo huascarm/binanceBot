@@ -181,11 +181,12 @@ module.exports = class Robot{
 		this.baseAsset = BA;
 	}
 
-	// check Stop Loss
+	// Throw true, only if there is openedPrice and stopLoss and they are crossed 
 	checkStopLoss()
 	{
 		//console.log("STOPLOSS:", this.openedPrice * (1.0 - this.stopLoss/100.0));
 		if(this.stopLoss == 0 || this.openedPrice == 0) return false;
+		/** aqui verificamos que el precio es menor que el margen de stop loss puesto, entonces vende HUASCAR */
 		if(this.currentPrice <= (this.openedPrice * (1.0 - this.stopLoss/100.0)))
 		{
 			this.binance.marketSell(this.symbol, this.lots);
@@ -194,6 +195,7 @@ module.exports = class Robot{
 		return false;
 	}
 
+	// Lo contrario que stop loss, solo que toma ganacias con el margen especificado
 	checkTakeProfit()
 	{
 		//console.log("TP:", this.openedPrice * (1+this.takeProfit/100.0));
