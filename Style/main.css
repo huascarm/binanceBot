@@ -1,0 +1,25 @@
+/* table styles */
+#Data {
+    font-family: "Trebuchet MS", Arial, Helvetica, sans-serif;
+    border-collapse: collapse;
+    width: 100%;
+}
+
+#Data td, #Data th {
+    border: 1px solid #ddd;
+    padding: 0px;
+    text-align: center;
+}
+
+#Data tr:nth-child(even){background-color: #f2f2f2;}
+
+#Data tr:hover {background-color: #ababab33;}
+
+#Data th {
+    padding-top: 4px;
+    padding-bottom: 4px;
+    text-align: center;
+	font-size: 100%;
+    background-color: #12121212;
+    color: #550202cd;
+}

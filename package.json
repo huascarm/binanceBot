@@ -1,0 +1,17 @@
+{
+  "name": "binance",
+  "version": "1.0.0",
+  "description": "",
+  "main": "main.js",
+  "dependencies": {
+    "domino": "^2.1.0",
+    "electron": "^3.0.8",
+    "jsdom": "^13.0.0"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "start": "node main.js"
+  },
+  "author": "",
+  "license": "ISC"
+}
