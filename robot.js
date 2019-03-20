@@ -27,6 +27,7 @@ module.exports = class Robot{
 		this.positionType = "-";
 		this.openedPrice = 0.0;
 		this.stopLoss = 2;
+		this.unexpectedDropPercentage = 1;
 		this.takeProfit = 0.5;
 		this.tickSize = 0.0;
 		this.stepSize = 0.0;
@@ -495,6 +496,10 @@ module.exports = class Robot{
 		this.stopLoss = sl * 1.0;
 		this.UPTrendSupportPercentage = sl;
 	}
+	//update Unexptected drop huascar
+	updateUnexpectedDropPercentage(ud){
+		this.unexpectedDropPercentage = ud * 1.0;
+	}
 
 	// update TP
 	updateTP(tp)
@@ -546,6 +551,18 @@ module.exports = class Robot{
 		//console.log("TP:", this.openedPrice * (1+this.takeProfit/100.0));
 		if(this.takeProfit == 0 || this.openedPrice == 0) return false;
 		if(this.currentPrice >= this.TPPrice)
+		{
+			return true;
+		}
+		return false;
+	}
+
+	checkTakeProfit50()
+	{
+		if(this.takeProfit == 0 || this.openedPrice == 0) return false;
+		//Work here HUASCAR
+		const TPPrice50 = (this.TPPrice+this.openedPrice)/2;
+		if(this.currentPrice >= TPPrice50)
 		{
 			return true;
 		}

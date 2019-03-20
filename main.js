@@ -319,6 +319,9 @@ var server = net.createServer(function (socket) {
 			case 12: // update SL
 				robots[msg.symbol].updateSL(msg.stopLoss);
 				break;
+			case 31: //update from frontend
+				robots[msg.symbol].updateUnexpectedDropPercentage(msg.unexpectedDropPercentage);
+				break;
 			case 13: // update TP
 				robots[msg.symbol].updateTP(msg.takeProfit);
 				break;
@@ -635,7 +638,6 @@ function afterBuy(error, response) {
 		//console.log(response);
 		var symbol = response.symbol;
 		if (symbol != undefined) {
-			//**here is the second key HUASCAR */
 			robots[symbol].updateOpenedPrice(response.fills[0].price);
 			robots[symbol].updateSLPrice(robots[symbol].openedPrice * (1.0 - robots[symbol].stopLoss / 100.0));
 			robots[symbol].updateTPPrice(robots[symbol].openedPrice * (1.0 + robots[symbol].takeProfit / 100.0));
@@ -894,9 +896,9 @@ function update(x) {
 				console.log(x + "SL");
 			sell(x);
 		}
-		//check if the price has meet the second TP price
-		else if(true){
-
+		//check if the price has reached at least 50% of TP price, then update SL HUASCAR
+		else if(robots[x].checkTakeProfit50() == true){
+			robots[symbol].updateSLPrice(robots[symbol].currentPrice * (1.0 - robots[symbol].unexpectedDropPercentage / 100.0));
 		}
 	}
 
@@ -993,6 +995,10 @@ function update(x) {
 			sell(x);
 			if (debug)
 				console.log(x + "TP_Sell");
+		}
+		//in downdtrend HUASCAR
+		else if(robots[x].checkTakeProfit50() == true){
+			robots[symbol].updateSLPrice(robots[symbol].currentPrice * (1.0 - robots[symbol].unexpectedDropPercentage / 100.0));
 		}
 	}
 
