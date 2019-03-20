@@ -3,7 +3,7 @@ var net = require('net');
 var Robot = require('./robot.js');
 var fs = require('fs');
 var clientSocket;
-
+const TEST = true;
 API = ""
 SECRET = ""
 
@@ -13,16 +13,17 @@ var binance = binance = require('node-binance-api')().options({
 	APISECRET: 'mnlOHUNVlNjyfFGSL1EOdSoqyEbELLFtgpXHKBy3fXiyJOb8UOUng5hAQ3pWzsBL',
 	recvWindow: 60000,
 	useServerTime: true, // If you get timestamp errors, synchronize to server time at startup
-	test: false // If you want to use sandbox mode where orders are simulated
+	test: TEST // If you want to use sandbox mode where orders are simulated
 });
 
 fs.readFile('API', function read(err, data) {
 
-	var msg = JSON.parse(data);
+	var msg ;
 	if (err) {
 		console.log('Don`t exist API charged');
 	}
 	else {
+		msg = JSON.parse(data);
 		const Binance = require('node-binance-api');
 		var newInstance = null;
 		try {
@@ -31,7 +32,7 @@ fs.readFile('API', function read(err, data) {
 				APISECRET: msg.APISECRET,
 				recvWindow: 60000,
 				useServerTime: true, // If you get timestamp errors, synchronize to server time at startup
-				test: false // If you want to use sandbox mode where orders are simulated
+				test: TEST // If you want to use sandbox mode where orders are simulated
 			});
 
 		} catch (error) {
@@ -200,6 +201,7 @@ var server = net.createServer(function (socket) {
 					// check if exchange has symbol
 					for (var i = 0; i <= listSymbols.length - 1; i++) {
 						if (listSymbols[i].toLowerCase() == msg.symbol.toLowerCase()) {
+							console.log('SE ANADE SIMBOLO');
 							robots[msg.symbol] = new Robot(binance);
 							robots[msg.symbol].reset();
 							robots[msg.symbol].symbol = msg.symbol.toUpperCase();
@@ -211,13 +213,11 @@ var server = net.createServer(function (socket) {
 								'robot': robots[msg.symbol]
 							};
 							socket.write(JSON.stringify(obj));
-
 							binance.websockets.chart(robots[msg.symbol].symbol, robots[msg.symbol].timeFrame, (symbol, interval, chart) => {
-
 								if (robots[symbol] == undefined) return;
 								if (!robots[symbol].isActived) return;
 
-								// update series
+								// get past candle data
 								symbolSeries[symbol] = binance.array(chart);
 
 								// robot is off
@@ -285,7 +285,7 @@ var server = net.createServer(function (socket) {
 						APISECRET: SECRET,
 						recvWindow: 60000,
 						useServerTime: true, // If you get timestamp errors, synchronize to server time at startup
-						test: false // If you want to use sandbox mode where orders are simulated
+						test: TEST // If you want to use sandbox mode where orders are simulated
 					});
 				} catch (error) {
 					newInstance = null;
@@ -544,6 +544,7 @@ server.on('connection', function (socket) {
 		'protocol': 5,
 		'robots': robots
 	};
+	console.log('User connected')
 	socket.write(JSON.stringify(obj));
 });
 
@@ -722,14 +723,7 @@ function update(x) {
 
 	// used when robot start's
 	if (robots[x].onStart == true) {
-		//#########################################################################
-		//robots[x].conditonPhase = robots[x].phases.UpTrend;
-		//var price = 0.2058;
-		//robots['ICXUSDT'].updateOpenedPrice(price);
-		//robots['ICXUSDT'].UpTrendBasePrice = price;
-		//robots['ICXUSDT'].updateSLPrice(price* (1.0 - robots['ICXUSDT'].stopLoss/100.0));
-		//robots['ICXUSDT'].updateTPPrice(price * (1.0 + robots['ICXUSDT'].takeProfit/100.0));
-		//#########################################################################	    	
+  	
 		robots[x].conditonPhase = robots[x].phases.WaitingMACross;
 		if (debug) {
 
@@ -900,6 +894,10 @@ function update(x) {
 				console.log(x + "SL");
 			sell(x);
 		}
+		//check if the price has meet the second TP price
+		else if(true){
+
+		}
 	}
 
 	if (robots[x].conditonPhase == robots[x].phases.UpTrend) {
@@ -1014,13 +1012,14 @@ function updateClient(x) {
 	} catch (error) { }
 }
 
-// Get 24h price change statistics for all symbols
+// Update the precies for all symbolos in binance API
+var cprev =0;
 binance.websockets.prevDay(false, function (error, obj) {
-
 	global.ticker[obj.symbol] = obj;
 
 	if (robots[obj.symbol] != undefined) {
 		if (robots[obj.symbol].isActived) {
+			console.log('MEJOR OFERTA PARA '+obj.symbol+': ', obj.bestBid)
 			update(obj.symbol);
 			updateClient(obj.symbol);
 		}
