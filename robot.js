@@ -27,7 +27,6 @@ module.exports = class Robot{
 		this.positionType = "-";
 		this.openedPrice = 0.0;
 		this.stopLoss = 2;
-		this.unexpectedDropPercentage = 1;
 		this.takeProfit = 0.5;
 		this.tickSize = 0.0;
 		this.stepSize = 0.0;
@@ -551,15 +550,6 @@ module.exports = class Robot{
 			return true;
 		}
 		return false;
-	}
-
-
-	tryUpdateStoploss()
-	{
-		if(this.takeProfit == 0 || this.openedPrice == 0) return false;
-		//Work here HUASCAR
-		let provSLPrice = this.currentPrice * (1.0 - this.stopLoss / 100.0);
-		this.SLPrice = (provSLPrice > this.SLPrice) ? provSLPrice: this.SLPrice;
 	}
 	
 	ema(series, period, offsetCandles = 0) {			
