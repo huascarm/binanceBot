@@ -496,10 +496,6 @@ module.exports = class Robot{
 		this.stopLoss = sl * 1.0;
 		this.UPTrendSupportPercentage = sl;
 	}
-	//update Unexptected drop huascar
-	updateUnexpectedDropPercentage(ud){
-		this.unexpectedDropPercentage = ud * 1.0;
-	}
 
 	// update TP
 	updateTP(tp)
@@ -557,16 +553,13 @@ module.exports = class Robot{
 		return false;
 	}
 
-	checkTakeProfit50()
+
+	tryUpdateStoploss()
 	{
 		if(this.takeProfit == 0 || this.openedPrice == 0) return false;
 		//Work here HUASCAR
-		const TPPrice50 = (this.TPPrice+this.openedPrice)/2;
-		if(this.currentPrice >= TPPrice50)
-		{
-			return true;
-		}
-		return false;
+		let provSLPrice = this.currentPrice * (1.0 - this.stopLoss / 100.0);
+		this.SLPrice = (provSLPrice > this.SLPrice) ? ProvSLPrice: this.SLPrice;
 	}
 	
 	ema(series, period, offsetCandles = 0) {			

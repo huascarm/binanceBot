@@ -319,9 +319,6 @@ var server = net.createServer(function (socket) {
 			case 12: // update SL
 				robots[msg.symbol].updateSL(msg.stopLoss);
 				break;
-			case 31: //update from frontend
-				robots[msg.symbol].updateUnexpectedDropPercentage(msg.unexpectedDropPercentage);
-				break;
 			case 13: // update TP
 				robots[msg.symbol].updateTP(msg.takeProfit);
 				break;
@@ -882,7 +879,6 @@ function update(x) {
 		}
 	}
 
-
 	if (robots[x].conditonPhase == robots[x].phases.WaitingToEnterInUPTrendOrSL) {
 		if (robots[x].checkTakeProfit() == true) {
 			if (debug)
@@ -896,10 +892,8 @@ function update(x) {
 				console.log(x + "SL");
 			sell(x);
 		}
-		//check if the price has reached at least 50% of TP price, then update SL HUASCAR
-		else if(robots[x].checkTakeProfit50() == true){
-			robots[symbol].updateSLPrice(robots[symbol].currentPrice * (1.0 - robots[symbol].unexpectedDropPercentage / 100.0));
-		}
+		//update stop loss at the best price posible, then update SL HUASCAR
+		robots[x].tryUpdateStoploss();
 	}
 
 	if (robots[x].conditonPhase == robots[x].phases.UpTrend) {
@@ -997,9 +991,7 @@ function update(x) {
 				console.log(x + "TP_Sell");
 		}
 		//in downdtrend HUASCAR
-		else if(robots[x].checkTakeProfit50() == true){
-			robots[symbol].updateSLPrice(robots[symbol].currentPrice * (1.0 - robots[symbol].unexpectedDropPercentage / 100.0));
-		}
+		robots[x].tryUpdateStoploss();
 	}
 
 	robots[x].updateConditionsPhaseName();
@@ -1025,7 +1017,6 @@ binance.websockets.prevDay(false, function (error, obj) {
 
 	if (robots[obj.symbol] != undefined) {
 		if (robots[obj.symbol].isActived) {
-			console.log('MEJOR OFERTA PARA '+obj.symbol+': ', obj.bestBid)
 			update(obj.symbol);
 			updateClient(obj.symbol);
 		}
