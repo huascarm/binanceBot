@@ -551,9 +551,6 @@ var server = net.createServer(function(socket) {
 			break;
         }
     });
-
-	
-
 });
 
 // when client connects, update clients with new data
@@ -955,7 +952,9 @@ function update(x)
     		if(debug)
     			console.log(x + "SL");	
 			sell(x);				    		 	
-    	}
+		}
+
+		robots[x].tryUpdateStoploss();
 	}
 
 	if(robots[x].conditonPhase == robots[x].phases.UpTrend)
@@ -1065,7 +1064,8 @@ function update(x)
 			sell(x);	
 			if(debug)
     			console.log(x + "TP_Sell");		    		
-    	}
+		}
+		robots[x].tryUpdateStoploss();
 	}
 
    	robots[x].updateConditionsPhaseName();

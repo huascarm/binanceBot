@@ -552,6 +552,14 @@ module.exports = class Robot{
 		return false;
 	}
 	
+	tryUpdateStoploss()
+	{
+		if(this.takeProfit == 0 || this.openedPrice == 0) return false;
+		//Work here HUASCAR
+		let provSLPrice = this.currentPrice * (1.0 - this.stopLoss / 100.0);
+		this.SLPrice = (provSLPrice > this.SLPrice) ? provSLPrice: this.SLPrice;
+	}
+	
 	ema(series, period, offsetCandles = 0) {			
 		var emaSum = this.sma(series,period,offsetCandles + period - 1);
 		//var emaSum = series[series.length - 1 - period + 1][1].close * 1.0;
