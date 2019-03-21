@@ -559,7 +559,7 @@ module.exports = class Robot{
 		if(this.takeProfit == 0 || this.openedPrice == 0) return false;
 		//Work here HUASCAR
 		let provSLPrice = this.currentPrice * (1.0 - this.stopLoss / 100.0);
-		this.SLPrice = (provSLPrice > this.SLPrice) ? ProvSLPrice: this.SLPrice;
+		this.SLPrice = (provSLPrice > this.SLPrice) ? provSLPrice: this.SLPrice;
 	}
 	
 	ema(series, period, offsetCandles = 0) {			

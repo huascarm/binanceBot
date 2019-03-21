@@ -7,7 +7,6 @@ const TEST = true;
 API = ""
 SECRET = ""
 
-
 var binance = binance = require('node-binance-api')().options({
 	APIKEY: 'mXpvqhYpSRGhcntQ7JFallsD6BpEvHANQyv5urcIyJou1UZ1w7IvebpiDUrnFPTU',
 	APISECRET: 'mnlOHUNVlNjyfFGSL1EOdSoqyEbELLFtgpXHKBy3fXiyJOb8UOUng5hAQ3pWzsBL',
